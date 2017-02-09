@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>gifGet Tester</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link href="https://fonts.googleapis.com/css?family=Caveat:700" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
+	html{
+		position: relative;
+		min-height: 100%;
+	}
+	body{
+		background-color: #dadada;
+		font-family: 'Caveat', cursive;
+	}
+	.pull-btn{
+		margin-right: 50px;
+		margin-left: 150px;
+		background-color: blue;
+	}
+	.submitButton{
+		background-color: blue;
+	}
+	.input-div{
+		padding-top: 10px;
+		padding-bottom: 43px;
+		background-color: #8CDD81 !important;
+	}
+	.gif-group-title{
+		padding-bottom: 30px;
+		/*background-color: #8CDD81 !important;*/
+	}
+	.titleArea{
+		margin: 0px;
+		background-color: #8CDD81 !important;
+	}
+	#borderDiv{
+		margin-top: 175px;
+		border-top: 1px solid white;
+	}
+	#viewField{
+		margin-top: 25px !important;
+		background-image: url("");
+		height: 0px;
+		width: 0px;
+	}
+	#footer{
+		padding-top: 20px;
+		padding-bottom: 20px;
+		position: absolute;
+   	bottom:0;
+   	width:100%;
+	 	height: auto;
+ }
+</style>
+</head>
+<body>
+<h1 class="text-center titleArea">GiphyGetter</h1>
+<form id="random" class="form-inline titleArea">
+	<div class="form-group col-md-6 input-div">
+		<h3 class="text-center gif-group-title">Random Gifs</h3>
+		<input type="button" id="randomGif" value="Get Random Gif" class="btn btn-success pull-btn">
+		<input class="form-control" placeholder="Enter a Keyword"type="text" id="randomSearch" value="">
+		<input class="btn btn-success submitButton" id="randomSearchSubmit" type="submit" value="Submit">
+	</div>
+</form>
+
+<form id="trending" class="form-inline titleArea">
+<div class="form-group col-md-6 input-div">
+	<h3 class="text-center gif-group-title">Trending Gifs</h3>
+	<input type="button" class="btn btn-success pull-btn" id="trendingGif" value="Get Trending Gif">
+	<input class="form-control" placeholder="Enter a Keyword" type="text" id="trendingSearch" value="">
+	<input class="btn btn-success submitButton" id="searchButton" type="submit" value="Submit">
+</div>
+</form>
+<div id="borderDiv">
+<div id="viewField" class="center-block"></div>
+</div>
+<footer id="footer"><img id="footerImage" src="PoweredBy_200_Horizontal_Light-Backgrounds_With_Logo.gif"></footer>
+<script>
+$(document).ready(function(){
+	$("#randomGif").click(function(e){
+		e.preventDefault();
+		var myurl = "http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC";
+		getRandomGif(myurl);
+	})
+	$("#randomSearchSubmit").click(function(e){
+		var value = $("#randomSearch").val();
+		var split = value.split(" ");
+		value = split.join("+");
+		console.log(value);
+		e.preventDefault();
+		var myurl = "http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC";
+		myurl += "&tag="+value;
+		getRandomGif(myurl);
+	})
+	function getRandomGif(url){
+		$.ajax({
+			url: url,
+			dataType: "json",
+			crossOrigin: true,
+			success: function(parsed_json){
+				var image_url = parsed_json["data"]["image_url"];
+				var image_height = parsed_json["data"]["image_height"];
+				var image_width = parsed_json["data"]["image_width"];
+				console.log(image_url);
+				$("#viewField").css("background-image","url("+image_url+")");
+				$("#viewField").css("height",image_height);
+				$("#viewField").css("width",image_width);
+			}
+		});
+	}
+	$("#trendingGif").click(function(e){
+		e.preventDefault();
+		var myurl = "http://api.giphy.com/v1/gifs/trending?api_key=dc6zaTOxFJmzC";
+		getTrendingGif(myurl);
+	})
+	$("#searchButton").click(function(e){
+		var value = $("#trendingSearch").val();
+		var split = value.split(" ");
+		value = split.join("+");
+		console.log(value);
+		e.preventDefault();
+		var myurl = "http://api.giphy.com/v1/gifs/search?q="+value+"&api_key=dc6zaTOxFJmzC";
+		console.log(myurl);
+		getTrendingGif(myurl);
+	})
+	function getTrendingGif(url){
+		$.ajax({
+			url: url,
+			dataType: "json",
+			crossOrigin: true,
+			success: function(parsed_json){
+				var index = Math.floor(Math.random() * 25);
+				console.log(index);
+				var image_url = parsed_json["data"][index]["images"]["original"]["url"];
+				var image_height = parsed_json["data"][index]["images"]["original"]["height"];
+				var image_width = parsed_json["data"][index]["images"]["original"]["width"];
+				console.log(image_url);
+				$("#viewField").css("background-image","url("+image_url+")");
+				$("#viewField").css("height",image_height);
+				$("#viewField").css("width",image_width);
+			}
+		});
+	}
+});
+</script>
+</body>
+</html>
